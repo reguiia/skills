@@ -30,6 +30,20 @@ class TestGeminiCLI(unittest.TestCase):
         gemini_pptx.unpack(args)
         self.assertTrue(mock_run_command.call_args[0][0].endswith('unpack.py test.pptx output'))
 
+    @patch('gemini_pptx.run_command')
+    @patch('os.listdir')
+    def test_gemini_pptx_create(self, mock_listdir, mock_run_command):
+        mock_listdir.return_value = ['slide2.html', 'slide1.html', 'style.css']
+        args = MagicMock()
+        args.input_dir = 'html_slides'
+        args.output_file = 'presentation.pptx'
+
+        gemini_pptx.create(args)
+
+        script_path = os.path.join(gemini_pptx.get_skill_path('pptx'), 'scripts/html2pptx.js')
+        expected_command = f"node {script_path} presentation.pptx html_slides/slide1.html html_slides/slide2.html"
+        mock_run_command.assert_called_once_with(expected_command)
+
     @patch('gemini_docx.run_command')
     def test_gemini_docx_extract_text(self, mock_run_command):
         args = MagicMock()

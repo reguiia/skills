@@ -39,6 +39,18 @@ def thumbnails(args):
     print(f"Running: {command}")
     run_command(command)
 
+def create(args):
+    """Creates a new .pptx file from a directory of HTML files."""
+    input_dir = args.input_dir
+    output_file = args.output_file
+    script_path = os.path.join(get_skill_path('pptx'), 'scripts/html2pptx.js')
+
+    html_files = sorted([os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith('.html')])
+
+    command = f"node {script_path} {output_file} {' '.join(html_files)}"
+    print(f"Running: {command}")
+    run_command(command)
+
 def main():
     parser = argparse.ArgumentParser(description="A command-line interface for the pptx skill.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -66,6 +78,12 @@ def main():
     parser_thumbnails.add_argument("output_prefix", nargs='?', help="The output prefix for the thumbnail files.")
     parser_thumbnails.add_argument("--cols", type=int, default=5, help="Number of columns in the thumbnail grid.")
     parser_thumbnails.set_defaults(func=thumbnails)
+
+    # Sub-parser for create
+    parser_create = subparsers.add_parser("create", help="Create a new .pptx file from HTML.")
+    parser_create.add_argument("input_dir", help="The directory containing HTML files for the slides.")
+    parser_create.add_argument("output_file", help="The output .pptx file.")
+    parser_create.set_defaults(func=create)
 
     args = parser.parse_args()
     args.func(args)

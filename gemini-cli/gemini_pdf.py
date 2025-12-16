@@ -38,7 +38,7 @@ def extract_images(args):
 
 def main():
     parser = argparse.ArgumentParser(description="A command-line interface for the pdf skill.")
-    subparsers = parser.add_subparsers(dest="command", required=T)
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Sub-parser for extract-text
     parser_extract_text = subparsers.add_parser("extract-text", help="Extract text from a .pdf file.")
